@@ -280,13 +280,13 @@ class Pet(object):
         free_chest = self.chest_info()
         if free_chest:
             self.get_chest(free_chest)
+        if stamina >= 65:
+            self.walk()
         need_to_buy, day_tasks, stamina = self.get_info()
         if need_to_buy:
             self.buy(need_to_buy)
         if day_tasks:
             self.do_day_tasks(day_tasks)
-        if stamina >= 68:
-            self.walk()
 
 
 class Tree(object):

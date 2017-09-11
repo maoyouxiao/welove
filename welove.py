@@ -96,9 +96,7 @@ class Home(object):
                 data.pop("love_space_id")
                 data.pop("sig")
                 count += 1
-                if count == 10:
-                    break
-        if count == 10:
+        if count >= 10:
             print("拜访任务已完成~~~")
         else:
             print("拜访任务未完成!!!")

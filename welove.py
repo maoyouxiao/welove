@@ -306,6 +306,12 @@ class Tree(object):
         results = response.json()
         return results
 
+    def check_info(self):
+        info = self.info()
+        do_task = True if info['lack_sunlight'] or info['lack_water'] else False
+        do_harvest = True if info['next_level_growth'] == 0 else False
+        return do_task, do_harvest
+
     def records(self):
         url = baseURL + "/v1/game/tree/records"
         data = {}
@@ -315,6 +321,16 @@ class Tree(object):
         response = requests.post(url, data, headers=headers)
         results = response.json()
         return results
+
+    def harvest(self):
+        print("正在收获爱情树...")
+        url = baseURL + "/v1/game/tree/harvest"
+        data = {}
+        data["access_token"] = self.token
+        data["app_key"] = app_key
+        data["sig"] = buildSig(url, data)
+        resp = requests.post(url, data, headers=headers)
+        return resp
     
     def fuck(self):
         url = baseURL + "/v1/game/tree/op"
@@ -322,15 +338,22 @@ class Tree(object):
         data["access_token"] = self.token
         data["app_key"] = app_key
         print("正在完成爱情树任务...")
-        for op in [1,2]:
-            data["op"] = op
-            data["sig"] = buildSig(url, data)
-            requests.post(url, data, headers=headers)
-            data.pop("op")
-            data.pop("sig")
+        results = self.check_info()
+        if results[1]:
+            self.harvest()
+        if results[0]:
+            for op in [1,2]:
+                data["op"] = op
+                data["sig"] = buildSig(url, data)
+                requests.post(url, data, headers=headers)
+                data.pop("op")
+                data.pop("sig")
         self.records()
-        print("爱情树任务已完成~~~")
-
+        results = self.check_info()
+        if results[0]:
+            print("爱情树任务未完成!!!")
+        else:
+            print("爱情树任务已完成~~~")
 
 class Welove(object):
 
